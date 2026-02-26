@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi des Ventes - Sajom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+    <div class="max-w-6xl mx-auto py-10 px-4">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-blue-600">Suivi des Ventes 🕶️</h1>
+            <p class="text-gray-600">Tableau de bord de l'activité de Sajom</p>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
+                <p class="text-sm text-gray-500 uppercase font-bold">Bénéfice Net Total</p>
+                <p class="text-3xl font-bold text-green-600">78,10 €</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
+                <p class="text-sm text-gray-500 uppercase font-bold">Articles Vendus</p>
+                <p class="text-3xl font-bold text-blue-600">4</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-yellow-500">
+                <p class="text-sm text-gray-500 uppercase font-bold">En Stock</p>
+                <p class="text-3xl font-bold text-yellow-600">17</p>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-xs">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Statut</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Produit</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Date Achat</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Prix Achat</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Prix Vente</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Bénéfice</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left">Canal</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <!-- Vendu -->
+                    <tr class="hover:bg-gray-50 bg-green-50">
+                        <td class="px-5 py-4 border-b border-gray-200">Vendu</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Gants noirs Taille 8</td>
+                        <td class="px-5 py-4 border-b border-gray-200">04/11/2025</td>
+                        <td class="px-5 py-4 border-b border-gray-200">17,70 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">40,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200 font-bold text-green-600">+22,30 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Vinted</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 bg-green-50">
+                        <td class="px-5 py-4 border-b border-gray-200">Vendu</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Gants noirs Taille 8</td>
+                        <td class="px-5 py-4 border-b border-gray-200">04/11/2025</td>
+                        <td class="px-5 py-4 border-b border-gray-200">17,70 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">40,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200 font-bold text-green-600">+22,30 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Vinted</td>
+                    </tr>
+                    <!-- Donné -->
+                    <tr class="hover:bg-gray-50 bg-red-50">
+                        <td class="px-5 py-4 border-b border-gray-200 text-red-600 font-bold">Donné</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Training OM Menthe M</td>
+                        <td class="px-5 py-4 border-b border-gray-200">07/11/2025</td>
+                        <td class="px-5 py-4 border-b border-gray-200">22,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">0,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200 text-red-600 font-bold">-22,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Ami</td>
+                    </tr>
+                    <!-- Autres ventes -->
+                    <tr class="hover:bg-gray-50 bg-green-50">
+                        <td class="px-5 py-4 border-b border-gray-200">Vendu</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Training OM Menthe M</td>
+                        <td class="px-5 py-4 border-b border-gray-200">07/11/2025</td>
+                        <td class="px-5 py-4 border-b border-gray-200">22,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">50,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200 font-bold text-green-600">+28,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Vinted</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 bg-green-50">
+                        <td class="px-5 py-4 border-b border-gray-200">Vendu</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Training OM Menthe L</td>
+                        <td class="px-5 py-4 border-b border-gray-200">07/11/2025</td>
+                        <td class="px-5 py-4 border-b border-gray-200">22,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">49,50 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200 font-bold text-green-600">+27,50 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Vinted</td>
+                    </tr>
+                    <!-- Stock (Exemple) -->
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-5 py-4 border-b border-gray-200 text-gray-500 italic">En Stock</td>
+                        <td class="px-5 py-4 border-b border-gray-200">Training OM KING XL</td>
+                        <td class="px-5 py-4 border-b border-gray-200">28/12/2025</td>
+                        <td class="px-5 py-4 border-b border-gray-200">22,00 €</td>
+                        <td class="px-5 py-4 border-b border-gray-200">-</td>
+                        <td class="px-5 py-4 border-b border-gray-200">-</td>
+                        <td class="px-5 py-4 border-b border-gray-200">-</td>
+                    </tr>
+                    <!-- ... etc ... -->
+                </tbody>
+            </table>
+        </div>
+        <p class="mt-4 text-xs text-gray-400 text-center italic text-sm">Tableau généré par Claw pour Sajom.</p>
+    </div>
+</body>
+</html>
