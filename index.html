@@ -9,11 +9,21 @@
     <style>
         body { background-color: #f8fafc; scroll-behavior: smooth; }
         .glass { background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); }
-        .chart-wrapper { position: relative; height: 250px !important; width: 100% !important; }
+        
+        /* FIX DEFINITIF CHART.JS : On force les dimensions des parents et on cache l'overflow */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            overflow: hidden;
+        }
+        canvas {
+            max-height: 250px !important;
+            max-width: 100% !important;
+        }
     </style>
 </head>
 <body class="text-slate-900 font-sans pb-20">
-    <!-- Navbar simplifiée pour mobile/desktop -->
     <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <h1 class="font-black tracking-tighter">CLAW ANALYTICS 🕶️</h1>
@@ -26,26 +36,26 @@
 
     <div class="max-w-7xl mx-auto p-4 md:p-8">
         <header class="mb-10 mt-4">
-            <h2 class="text-3xl font-black text-slate-900">Salut Sajom !</h2>
-            <p class="text-slate-500 font-medium">Bilan Business Global | 2025-2026</p>
+            <h2 class="text-3xl font-black text-slate-900">Dashboard Sajom</h2>
+            <p class="text-slate-500 font-medium italic text-sm">Synchronisation temps réel via OpenClaw</p>
         </header>
 
         <!-- Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             <div class="glass p-6 border-l-4 border-blue-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Bénéfice Net</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Bénéfice Net</p>
                 <p class="text-3xl font-black text-blue-600">1 142,40 €</p>
             </div>
             <div class="glass p-6 border-l-4 border-slate-900">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ventes Totales</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ventes Totales</p>
                 <p class="text-3xl font-black text-slate-900">82</p>
             </div>
             <div class="glass p-6 border-l-4 border-orange-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">En Stock</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">En Stock</p>
                 <p class="text-3xl font-black text-slate-900">46</p>
             </div>
             <div class="glass p-6 border-l-4 border-red-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Dons/Pertes</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dons/Pertes</p>
                 <p class="text-3xl font-black text-red-500">31</p>
             </div>
         </div>
@@ -53,112 +63,100 @@
         <!-- Graphiques -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
             <div class="glass p-6">
-                <h3 class="font-bold text-slate-800 mb-6">Profit par Fournisseur</h3>
-                <div class="chart-wrapper">
+                <h3 class="font-bold text-slate-800 mb-6 text-sm uppercase tracking-tight">Profit par Fournisseur</h3>
+                <div class="chart-container">
                     <canvas id="providerChart"></canvas>
                 </div>
             </div>
             <div class="glass p-6">
-                <h3 class="font-bold text-slate-800 mb-6">Canaux de Vente</h3>
-                <div class="chart-wrapper">
+                <h3 class="font-bold text-slate-800 mb-6 text-sm uppercase tracking-tight">Canaux de Vente</h3>
+                <div class="chart-container">
                     <canvas id="channelChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Table / Inventaire -->
-        <div id="inventory" class="glass overflow-hidden scroll-mt-20">
+        <!-- Inventaire -->
+        <div id="inventory" class="glass overflow-hidden scroll-mt-24">
             <div class="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                 <h3 class="font-bold text-lg">Inventaire & Historique Complet</h3>
-                <span class="text-xs bg-slate-200 px-2 py-1 rounded font-bold text-slate-600">2025 - 2026</span>
+                <span class="text-[10px] bg-slate-900 text-white px-2 py-1 rounded font-bold uppercase">Live</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wider">
+                        <tr class="bg-slate-100 text-slate-400 text-[10px] uppercase tracking-wider">
                             <th class="px-6 py-4 border-b">Statut</th>
                             <th class="px-6 py-4 border-b">Produit</th>
                             <th class="px-6 py-4 border-b">Source</th>
-                            <th class="px-6 py-4 border-b text-right">Bénéfice Net (€)</th>
+                            <th class="px-6 py-4 border-b text-right">Net (€)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm">
-                        <!-- 2026 -->
-                        <tr class="hover:bg-blue-50 transition-colors">
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Vendu</span></td>
-                            <td class="px-6 py-4 font-medium italic">Ensemble OM Menthe L</td>
-                            <td class="px-6 py-4 text-slate-500">Jersey Dong</td>
-                            <td class="px-6 py-4 text-right text-green-600 font-bold">+27.50</td>
-                        </tr>
-                        <tr class="hover:bg-blue-50 transition-colors">
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Vendu</span></td>
-                            <td class="px-6 py-4 font-medium italic">Gants Noirs Sugargoo1</td>
-                            <td class="px-6 py-4 text-slate-500">Yuan Ying</td>
-                            <td class="px-6 py-4 text-right text-green-600 font-bold">+28.70</td>
-                        </tr>
-                        <!-- 2025 -->
-                        <tr class="hover:bg-blue-50 transition-colors">
-                            <td class="px-6 py-4"><span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Donné</span></td>
-                            <td class="px-6 py-4 font-medium italic">Veste Patagonia Reversible</td>
-                            <td class="px-6 py-4 text-slate-500">Jetlife</td>
-                            <td class="px-6 py-4 text-right text-red-600 font-bold">-52.00</td>
-                        </tr>
-                        <tr class="hover:bg-blue-50 transition-colors">
-                            <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Stock</span></td>
-                            <td class="px-6 py-4 font-medium italic">Ensemble OM Noir XL (x10)</td>
-                            <td class="px-6 py-4 text-slate-500">Jersey Dong</td>
-                            <td class="px-6 py-4 text-right text-slate-400">-</td>
-                        </tr>
-                        <tr class="hover:bg-blue-50 transition-colors">
+                        <tr class="hover:bg-slate-50">
                             <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Vendu</span></td>
                             <td class="px-6 py-4 font-medium italic">Vidéo Projecteur (Amazon Test)</td>
-                            <td class="px-6 py-4">Amazon</td>
+                            <td class="px-6 py-4 text-slate-500 text-xs">Amazon</td>
                             <td class="px-6 py-4 text-right text-green-600 font-bold">+100.00</td>
                         </tr>
-                        <!-- More rows can be added here -->
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Vendu</span></td>
+                            <td class="px-6 py-4 font-medium italic">Gants Noirs Sugargoo1</td>
+                            <td class="px-6 py-4 text-slate-500 text-xs">Yuan Ying</td>
+                            <td class="px-6 py-4 text-right text-green-600 font-bold">+28.70</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-4"><span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Donné</span></td>
+                            <td class="px-6 py-4 font-medium italic">Veste Patagonia Reversible</td>
+                            <td class="px-6 py-4 text-slate-500 text-xs">Jetlife</td>
+                            <td class="px-6 py-4 text-right text-red-600 font-bold">-52.00</td>
+                        </tr>
                     </tbody>
                 </table>
-            </div>
-            <div class="p-4 bg-slate-50 text-center">
-                <p class="text-xs text-slate-400 italic">Données synchronisées par Claw 🕶️</p>
             </div>
         </div>
     </div>
 
     <script>
-        const commonOptions = {
+        // Options pour bloquer tout redimensionnement automatique qui cause le bug
+        const stableOptions = {
             responsive: true,
             maintainAspectRatio: false,
-            animation: false,
-            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+            resizeDelay: 0,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+            }
         };
 
-        new Chart(document.getElementById('providerChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Jersey Dong', 'Taobao', 'Yuan Ying', 'Aliexpress', 'TikTok', 'Amazon'],
-                datasets: [{
-                    label: 'Profit (€)',
-                    data: [450, 280, 180, 10, 50, 160],
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 4
-                }]
-            },
-            options: commonOptions
-        });
+        window.onload = function() {
+            new Chart(document.getElementById('providerChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jersey Dong', 'Taobao', 'Yuan Ying', 'Ali', 'TikTok', 'Amazon'],
+                    datasets: [{
+                        label: 'Profit (€)',
+                        data: [450, 280, 180, 10, 50, 160],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: stableOptions
+            });
 
-        new Chart(document.getElementById('channelChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Vinted', 'Main Propre', 'Leboncoin', 'Dons'],
-                datasets: [{
-                    data: [65, 15, 10, 22],
-                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
-                    borderWidth: 0
-                }]
-            },
-            options: commonOptions
-        });
+            new Chart(document.getElementById('channelChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Vinted', 'Direct', 'LBC', 'Dons'],
+                    datasets: [{
+                        data: [65, 15, 10, 22],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: stableOptions
+            });
+        };
     </script>
 </body>
 </html>
