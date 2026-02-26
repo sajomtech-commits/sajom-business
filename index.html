@@ -8,21 +8,21 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .chart-container { position: relative; height: 300px; width: 100%; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans">
     <div class="flex flex-col md:flex-row min-h-screen">
         <!-- Sidebar -->
-        <div class="w-full md:w-64 bg-slate-900 text-white p-6">
+        <div class="w-full md:w-64 bg-slate-900 text-white p-6 shrink-0">
             <h1 class="text-2xl font-bold mb-8 flex items-center gap-2">
                 Claw Analytics 🕶️
             </h1>
             <nav class="space-y-4">
                 <a href="#" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-600">Tableau de bord</a>
-                <a href="#stats" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-slate-800">Statistiques</a>
                 <a href="#inventory" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-slate-800">Inventaire</a>
             </nav>
-            <div class="mt-auto pt-10 text-xs text-slate-500">
+            <div class="mt-10 pt-10 text-xs text-slate-500">
                 Propulsé par OpenClaw pour Sajom
             </div>
         </div>
@@ -31,12 +31,11 @@
         <div class="flex-1 p-4 md:p-10 overflow-y-auto">
             <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-3xl font-bold">Bienvenue, Sajom</h2>
-                    <p class="text-slate-500">Voici l'état actuel de ton business en ligne.</p>
+                    <h2 class="text-3xl font-bold tracking-tight">Dashboard Sajom</h2>
+                    <p class="text-slate-500">Analyse de performance 2025-2026</p>
                 </div>
                 <div class="flex gap-2">
-                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Boutique Active</span>
-                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">Sync GitHub OK</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center">● Boutique Active</span>
                 </div>
             </header>
 
@@ -44,81 +43,72 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 <div class="glass p-6 rounded-2xl shadow-sm border border-slate-200">
                     <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Bénéfice Net Global</p>
-                    <p class="text-3xl font-black text-slate-900" id="total-profit">1 142,40 €</p>
-                    <p class="text-xs text-green-600 mt-2">↑ Performance solide</p>
+                    <p class="text-3xl font-black text-slate-900">1 142,40 €</p>
                 </div>
                 <div class="glass p-6 rounded-2xl shadow-sm border border-slate-200">
                     <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Ventes Totales</p>
                     <p class="text-3xl font-black text-slate-900">82</p>
-                    <p class="text-xs text-slate-400 mt-2">Depuis mai 2025</p>
                 </div>
                 <div class="glass p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Stock Actuel</p>
+                    <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">En Stock</p>
                     <p class="text-3xl font-black text-slate-900">46</p>
-                    <p class="text-xs text-orange-500 mt-2">À écouler</p>
                 </div>
                 <div class="glass p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Taux de Perte (Dons)</p>
-                    <p class="text-3xl font-black text-slate-900">~22%</p>
-                    <p class="text-xs text-red-500 mt-2">Dons, défauts et personnel</p>
+                    <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Dons / Pertes</p>
+                    <p class="text-3xl font-black text-red-600">31 articles</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-                <!-- Chart 1: Profit by Provider -->
+                <!-- Chart 1 -->
                 <div class="glass p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold mb-4">Bénéfice par Fournisseur</h3>
-                    <canvas id="providerChart" height="200"></canvas>
+                    <div class="chart-container">
+                        <canvas id="providerChart"></canvas>
+                    </div>
                 </div>
-                <!-- Chart 2: Inventory Status -->
+                <!-- Chart 2 -->
                 <div class="glass p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="font-bold mb-4">Répartition des Canaux</h3>
-                    <canvas id="channelChart" height="200"></canvas>
+                    <div class="chart-container">
+                        <canvas id="channelChart"></canvas>
+                    </div>
                 </div>
             </div>
 
             <!-- Recent Transactions Table -->
             <div id="inventory" class="glass rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-slate-800">Dernières Opérations (2025-2026)</h3>
-                    <button class="text-sm text-blue-600 font-medium">Voir tout</button>
+                <div class="p-6 border-b border-slate-100 bg-white">
+                    <h3 class="font-bold text-lg text-slate-800">Dernières Opérations</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
-                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
+                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
                                 <th class="px-6 py-4">Statut</th>
                                 <th class="px-6 py-4">Produit</th>
                                 <th class="px-6 py-4">Fournisseur</th>
-                                <th class="px-6 py-4">Achat (€)</th>
-                                <th class="px-6 py-4">Vente (€)</th>
-                                <th class="px-6 py-4">Bénéfice (€)</th>
+                                <th class="px-6 py-4 text-right">Bénéfice (€)</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
                             <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs">Vendu</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Vendu</span></td>
                                 <td class="px-6 py-4 font-medium italic">Gants Noirs Sugargoo1</td>
                                 <td class="px-6 py-4">Yuan Ying</td>
-                                <td class="px-6 py-4">16.30</td>
-                                <td class="px-6 py-4">45.00</td>
-                                <td class="px-6 py-4 text-green-600 font-bold">+28.70</td>
+                                <td class="px-6 py-4 text-right text-green-600 font-bold">+28.70</td>
                             </tr>
                             <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-4"><span class="px-2 py-1 bg-gray-100 text-gray-500 rounded-md text-xs">Donné</span></td>
-                                <td class="px-6 py-4 font-medium italic">Veste Patagonia L</td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">Donné</span></td>
+                                <td class="px-6 py-4 font-medium italic">Veste Patagonia Reversible</td>
                                 <td class="px-6 py-4">Jetlife</td>
-                                <td class="px-6 py-4">52.00</td>
-                                <td class="px-6 py-4">0.00</td>
-                                <td class="px-6 py-4 text-red-600 font-bold">-52.00</td>
+                                <td class="px-6 py-4 text-right text-red-600 font-bold">-52.00</td>
                             </tr>
                             <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-4"><span class="px-2 py-1 bg-blue-100 text-blue-500 rounded-md text-xs">Stock</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">Stock</span></td>
                                 <td class="px-6 py-4 font-medium italic">Ensemble OM Noir XL</td>
                                 <td class="px-6 py-4">Jersey Dong</td>
-                                <td class="px-6 py-4">22.00</td>
-                                <td class="px-6 py-4">-</td>
-                                <td class="px-6 py-4 text-slate-400">-</td>
+                                <td class="px-6 py-4 text-right text-slate-400">-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -128,7 +118,13 @@
     </div>
 
     <script>
-        // Provider Chart
+        // Correction Chart.js pour éviter l'expansion infinie
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        };
+
         new Chart(document.getElementById('providerChart'), {
             type: 'bar',
             data: {
@@ -136,23 +132,22 @@
                 datasets: [{
                     label: 'Bénéfice (€)',
                     data: [450, 280, 180, 10, 50, 160],
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)'
+                    backgroundColor: '#3b82f6'
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: chartOptions
         });
 
-        // Channel Chart
         new Chart(document.getElementById('channelChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Vinted', 'Main Propre', 'Leboncoin', 'Dons/Personnel'],
+                labels: ['Vinted', 'Main Propre', 'Leboncoin', 'Dons'],
                 datasets: [{
                     data: [65, 15, 10, 22],
                     backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444']
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: chartOptions
         });
     </script>
 </body>
