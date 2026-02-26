@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventaire Complet - Sajom Business 🕶️</title>
+    <title>Inventaire Pro - Sajom Business 🕶️</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f8fafc; }
-        .filter-btn.active { background-color: #0f172a; color: white; }
+        body { background-color: #f1f5f9; }
+        .filter-active { background-color: #3b82f6 !important; color: white !important; }
+        .table-container { max-height: 70vh; overflow-y: auto; }
+        thead th { sticky: top; top: 0; background: #f8fafc; z-index: 10; }
     </style>
 </head>
-<body class="text-slate-900 font-sans pb-20">
+<body class="text-slate-900 font-sans pb-10">
     <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="max-w-[1600px] mx-auto flex justify-between items-center">
             <h1 class="font-black tracking-tighter uppercase">CLAW ANALYTICS 🕶️</h1>
             <div class="space-x-4 text-sm font-bold">
                 <a href="index.html" class="hover:text-blue-400 text-slate-400">Dashboard</a>
@@ -21,35 +23,47 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto p-4 md:p-8">
-        <header class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4">
-            <div>
-                <h2 class="text-3xl font-black text-slate-900 uppercase">Inventaire Global</h2>
-                <p class="text-slate-500 font-medium">Historique exhaustif 2025-2026</p>
+    <div class="max-w-[1600px] mx-auto p-4 md:p-6">
+        <!-- Barre de recherche et filtres rapides -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+                <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="Rechercher un produit..." class="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                <select id="sourceFilter" onchange="applyFilters()" class="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none">
+                    <option value="all">Toutes les sources</option>
+                    <option value="Taobao">Taobao</option>
+                    <option value="Jersey Dong">Jersey Dong</option>
+                    <option value="Yuan Ying">Yuan Ying</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Amazon">Amazon</option>
+                </select>
             </div>
-            <div class="flex bg-white p-1 rounded-xl border border-slate-200 shadow-sm overflow-x-auto max-w-full">
-                <button onclick="filterStatus('all')" class="filter-btn active px-4 py-2 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap uppercase">TOUT</button>
-                <button onclick="filterStatus('vendu')" class="filter-btn px-4 py-2 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap uppercase text-green-600">VENDU</button>
-                <button onclick="filterStatus('en-stock')" class="filter-btn px-4 py-2 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap uppercase text-blue-600">STOCK</button>
-                <button onclick="filterStatus('donne')" class="filter-btn px-4 py-2 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap uppercase text-red-600">DONNÉ</button>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button onclick="setStatusFilter('all')" class="status-btn filter-active px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">TOUT</button>
+                <button onclick="setStatusFilter('vendu')" class="status-btn px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">VENDU</button>
+                <button onclick="setStatusFilter('en-stock')" class="status-btn px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">STOCK</button>
+                <button onclick="setStatusFilter('donne')" class="status-btn px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">DONNÉ</button>
             </div>
-        </header>
+        </div>
 
+        <!-- Table Master -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" id="inventoryTable">
+            <div class="overflow-x-auto table-container">
+                <table class="w-full text-left border-collapse" id="masterTable">
                     <thead>
-                        <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest">
-                            <th class="px-6 py-4 border-b">Statut</th>
-                            <th class="px-6 py-4 border-b">Produit</th>
-                            <th class="px-6 py-4 border-b">Source</th>
-                            <th class="px-6 py-4 border-b">Achat</th>
-                            <th class="px-6 py-4 border-b">Vente</th>
-                            <th class="px-6 py-4 border-b text-right">Net</th>
+                        <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                            <th class="px-4 py-4 font-bold">Statut</th>
+                            <th class="px-4 py-4 font-bold">Produit</th>
+                            <th class="px-4 py-4 font-bold">Source / Commande</th>
+                            <th class="px-4 py-4 font-bold text-center">Date Achat</th>
+                            <th class="px-4 py-4 font-bold text-right">Achat (€)</th>
+                            <th class="px-4 py-4 font-bold text-right">Vente (€)</th>
+                            <th class="px-4 py-4 font-bold text-right">Net (€)</th>
+                            <th class="px-4 py-4 font-bold text-center">Date Vente</th>
+                            <th class="px-4 py-4 font-bold">Lieu</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 text-xs md:text-sm" id="inventoryBody">
-                        <!-- Injection JS -->
+                    <tbody class="divide-y divide-slate-50 text-[11px] md:text-xs">
+                        <!-- Injection dynamique -->
                     </tbody>
                 </table>
             </div>
@@ -59,153 +73,75 @@
     <script>
         const products = [
             // --- 2026 ---
-            { status: 'vendu', name: 'Gants noirs Taille 8', source: 'Yuan Ying', buy: 17.7, sell: 40, net: 22.3 },
-            { status: 'vendu', name: 'Gants noirs Taille 8', source: 'Yuan Ying', buy: 17.7, sell: 40, net: 22.3 },
-            { status: 'donne', name: 'Ensemble training OM Menthe M', source: 'Jersey Dong', buy: 22, sell: 0, net: -22 },
-            { status: 'vendu', name: 'Ensemble training OM Menthe M', source: 'Jersey Dong', buy: 22, sell: 50, net: 28 },
-            { status: 'vendu', name: 'Ensemble training OM Menthe L', source: 'Jersey Dong', buy: 22, sell: 49.5, net: 27.5 },
-            { status: 'en-stock', name: 'Ensemble training OM Menthe L', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Menthe XL', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Noir S', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Noir M', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Noir M', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Noir L', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Noir XL', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
-            { status: 'en-stock', name: 'Ensemble training OM Noir XL (x10)', source: 'Jersey Dong', buy: 22, sell: 0, net: 0 },
+            { status: 'vendu', name: 'Gants noirs Taille 8', source: 'Yuan Ying', cmd: 'ACBUY', dateAchat: '04/11/2025', buy: 17.7, sell: 40, net: 22.3, dateVente: '06/02/2026', lieu: 'vinted' },
+            { status: 'vendu', name: 'Gants noirs Taille 8', source: 'Yuan Ying', cmd: 'ACBUY', dateAchat: '04/11/2025', buy: 17.7, sell: 40, net: 22.3, dateVente: '10/02/2026', lieu: 'vinted' },
+            { status: 'donne', name: 'Ensemble training OM Menthe M', source: 'Jersey Dong', cmd: 'JD5', dateAchat: '07/11/2025', buy: 22, sell: 0, net: -22, dateVente: '01/02/2026', lieu: 'Jems' },
+            { status: 'vendu', name: 'Ensemble training OM Menthe M', source: 'Jersey Dong', cmd: 'JD5', dateAchat: '07/11/2025', buy: 22, sell: 50, net: 28, dateVente: '25/02/2026', lieu: 'vinted' },
+            { status: 'vendu', name: 'Ensemble training OM Menthe L', source: 'Jersey Dong', cmd: 'JD5', dateAchat: '07/11/2025', buy: 22, sell: 49.5, net: 27.5, dateVente: '07/02/2026', lieu: 'vinted' },
+            { status: 'en-stock', name: 'Ensemble training OM Menthe XL', source: 'Jersey Dong', cmd: 'JD5', dateAchat: '07/11/2025', buy: 22, sell: 0, net: 0, dateVente: '-', lieu: '-' },
+            { status: 'en-stock', name: 'Ensemble training OM Noir XL (x10)', source: 'Jersey Dong', cmd: 'JD6', dateAchat: '28/12/2025', buy: 22, sell: 0, net: 0, dateVente: '-', lieu: '-' },
 
-            // --- 2025 ---
-            { status: 'vendu', name: 'Maillot Real Rose', source: 'Taobao', buy: 9.6, sell: 20, net: 10.4 },
-            { status: 'donne', name: 'Maillot Real Noir', source: 'Taobao', buy: 9.6, sell: 0, net: -9.6 },
-            { status: 'donne', name: 'Maillot Real Gris', source: 'Taobao', buy: 9.6, sell: 0, net: -9.6 },
-            { status: 'vendu', name: 'Maillot City', source: 'Taobao', buy: 9.6, sell: 20, net: 10.4 },
-            { status: 'donne', name: 'Maillot Milan', source: 'Taobao', buy: 9.6, sell: 0, net: -9.6 },
-            { status: 'vendu', name: 'Maillot Liverpool', source: 'Taobao', buy: 9.6, sell: 20, net: 10.4 },
-            { status: 'vendu', name: 'Ensemble Running Vert', source: 'Taobao', buy: 9.6, sell: 25, net: 15.4 },
-            { status: 'vendu', name: 'Tee shirt Running Bleu ciel', source: 'Taobao', buy: 9.6, sell: 17.5, net: 7.9 },
-            { status: 'donne', name: 'Batterie Magsafe 20000', source: 'Taobao', buy: 9.6, sell: 0, net: -9.6 },
-            { status: 'donne', name: 'Batterie Magsafe 20000', source: 'Taobao', buy: 9.6, sell: 0, net: -9.6 },
-            { status: 'vendu', name: 'Batterie Magsafe 20000', source: 'Taobao', buy: 9.6, sell: 20, net: 10.4 },
-            { status: 'vendu', name: 'Batterie Magsafe 20000', source: 'Taobao', buy: 9.6, sell: 20, net: 10.4 },
-            { status: 'vendu', name: 'Batterie Magsafe 20000', source: 'Taobao', buy: 9.6, sell: 20, net: 10.4 },
-            { status: 'en-stock', name: 'Batterie Magsafe 20000 (x6)', source: 'Taobao', buy: 9.6, sell: 0, net: -9.6 },
-            { status: 'vendu', name: 'Ecouteurs SONY', source: 'Aliexpress', buy: 5, sell: 15, net: 10 },
-            { status: 'en-stock', name: 'Ecouteurs SONY (x4)', source: 'Aliexpress', buy: 5, sell: 0, net: -5 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Tiktok1)', source: 'TikTok', buy: 35, sell: 50, net: 15 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Tiktok2)', source: 'TikTok', buy: 22.8, sell: 50, net: 27.2 },
-            { status: 'donne', name: 'Vidéo Projecteur (Tiktok2)', source: 'TikTok', buy: 22.8, sell: 0, net: -22.8 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Tiktok2 - Main)', source: 'TikTok', buy: 22.8, sell: 30, net: 7.2 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Tiktok2 - Main)', source: 'TikTok', buy: 22.8, sell: 30, net: 7.2 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Tiktok2 - Perte)', source: 'TikTok', buy: 22.8, sell: 0, net: -22.8 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Amazon Test)', source: 'Amazon', buy: 0, sell: 60, net: 60 },
-            { status: 'vendu', name: 'Maillot Juve', source: 'Taobao', buy: 9.3, sell: 25, net: 15.7 },
-            { status: 'donne', name: 'Maillot Athletico', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'vendu', name: 'Maillot France', source: 'Taobao', buy: 9.3, sell: 25, net: 15.7 },
-            { status: 'donne', name: 'Maillot Barca', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'donne', name: 'Maillot Milan', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'vendu', name: 'Maillot PSG', source: 'Taobao', buy: 9.3, sell: 25, net: 15.7 },
-            { status: 'donne', name: 'Maillot PSG', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'vendu', name: 'Maillot Mexique (x3)', source: 'Taobao', buy: 9.3, sell: 25, net: 15.7 },
-            { status: 'donne', name: 'Maillot Mexique', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'donne', name: 'Maillot Ajax', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'donne', name: 'Maillot Milan2', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'vendu', name: 'Maillot Arsenal', source: 'Taobao', buy: 9.3, sell: 20, net: 10.7 },
-            { status: 'donne', name: 'Maillot Athletico', source: 'Taobao', buy: 9.3, sell: 0, net: -9.3 },
-            { status: 'vendu', name: 'Gants Predator', source: 'Taobao', buy: 18.26, sell: 40, net: 21.74 },
-            { status: 'vendu', name: 'Gants Predator (Bonus)', source: 'Taobao', buy: 18.26, sell: 50, net: 30.37 },
-            { status: 'vendu', name: 'Gants Jaune', source: 'Taobao', buy: 18.26, sell: 28, net: 9.74 },
-            { status: 'vendu', name: 'Gants Jaune', source: 'Taobao', buy: 18.26, sell: 32, net: 13.74 },
-            { status: 'vendu', name: 'Gants Orange (x2)', source: 'Taobao', buy: 18.26, sell: 30, net: 11.74 },
-            { status: 'vendu', name: 'Survêtement noir OM L', source: 'Taobao', buy: 23.74, sell: 50, net: 26.26 },
-            { status: 'vendu', name: 'Survêtement bleu OM M', source: 'Taobao', buy: 23.74, sell: 40, net: 16.26 },
-            { status: 'vendu', name: 'Ensemble OM Bleu ciel', source: 'Taobao', buy: 14.61, sell: 30, net: 15.39 },
-            { status: 'vendu', name: 'Ensemble OM noir L', source: 'Taobao', buy: 14.61, sell: 30, net: 15.39 },
-            { status: 'vendu', name: 'Ensemble OM noir Enfant', source: 'Taobao', buy: 14.61, sell: 25, net: 10.39 },
-            { status: 'vendu', name: 'Ensemble OM blanc Enfant', source: 'Taobao', buy: 14.61, sell: 25, net: 10.39 },
-            { status: 'vendu', name: 'Ensemble OM bleu foncé', source: 'Taobao', buy: 14.61, sell: 35, net: 20.39 },
-            { status: 'donne', name: 'Bas Amine (x2)', source: 'Taobao', buy: 9.13, sell: 0, net: -9.13 },
-            { status: 'donne', name: 'Hauts Amine (x2)', source: 'Taobao', buy: 5.48, sell: 0, net: -5.48 },
-            { status: 'vendu', name: 'Gants Noirs (x4)', source: 'Taobao', buy: 15, sell: 45, net: 30 },
-            { status: 'vendu', name: 'Gants Noirs/Blancs (x2)', source: 'Taobao', buy: 15, sell: 45, net: 30 },
-            { status: 'vendu', name: 'Gants Rouges (x2)', source: 'Taobao', buy: 15, sell: 45, net: 30 },
-            { status: 'en-stock', name: 'Gants bleu 8', source: 'Taobao', buy: 15, sell: 0, net: -15 },
-            { status: 'vendu', name: 'Gants bleu', source: 'Taobao', buy: 15, sell: 40, net: 25 },
-            { status: 'vendu', name: 'Vidéo Projecteur (Amazon Test 2)', source: 'Amazon', buy: 0, sell: 100, net: 100 },
-            { status: 'vendu', name: 'Ensemble OM Blanc (Tailles Diverses x4)', source: 'Jersey Dong', buy: 9.2, sell: 28, net: 18 },
-            { status: 'vendu', name: 'Ensemble OM Bleu Nuit (x4)', source: 'Jersey Dong', buy: 9.2, sell: 27, net: 17 },
-            { status: 'donne', name: 'Ensemble OM Bleu Nuit L', source: 'Jersey Dong', buy: 9.2, sell: 0, net: -9.2 },
-            { status: 'vendu', name: 'Ensemble Barça Jaune (x2)', source: 'Jersey Dong', buy: 9.2, sell: 28, net: 18 },
-            { status: 'donne', name: 'Ensemble Barça Jaune (x2)', source: 'Jersey Dong', buy: 9.2, sell: 0, net: -9.2 },
-            { status: 'en-stock', name: 'Ensemble Barça Jaune L', source: 'Jersey Dong', buy: 9.2, sell: 0, net: -9.2 },
-            { status: 'vendu', name: 'Ensemble Barça Bleu Rouge (x2)', source: 'Jersey Dong', buy: 9.2, sell: 28, net: 18 },
-            { status: 'donne', name: 'Ensemble Barça Noir', source: 'Jersey Dong', buy: 9.2, sell: 0, net: -9.2 },
-            { status: 'vendu', name: 'Ensemble Barça Noir 26', source: 'Jersey Dong', buy: 9.2, sell: 25, net: 15.8 },
-            { status: 'vendu', name: 'Ensemble Real Bleu (x5)', source: 'Jersey Dong', buy: 9.2, sell: 27, net: 17 },
-            { status: 'vendu', name: 'Ensemble Real Bleu Marine (x3)', source: 'Jersey Dong', buy: 9.2, sell: 25, net: 15.8 },
-            { status: 'vendu', name: 'Ensemble Training France M', source: 'Jersey Dong', buy: 19.5, sell: 50, net: 30.5 },
-            { status: 'vendu', name: 'Ensemble Training Real (x2)', source: 'Jersey Dong', buy: 19.5, sell: 45, net: 25.5 },
-            { status: 'en-stock', name: 'Ensemble Training OM bleu M', source: 'Jersey Dong', buy: 19.5, sell: 0, net: 0 },
-            { status: 'vendu', name: 'Ensemble Training PSG M', source: 'Jersey Dong', buy: 19.5, sell: 40, net: 20.5 },
-            { status: 'en-stock', name: 'Ensemble Capuche Bleu ciel OM M', source: 'Jersey Dong', buy: 29.5, sell: 0, net: 0 },
-            { status: 'vendu', name: 'Ensemble Capuche Bleu ciel OM L', source: 'Jersey Dong', buy: 29.5, sell: 50, net: 20.5 },
-            { status: 'donne', name: 'Ensemble Capuche Bleu nuit OM M', source: 'Jersey Dong', buy: 29.5, sell: 0, net: -29.5 },
-            { status: 'vendu', name: 'Ensemble Capuche Bleu nuit OM L', source: 'Jersey Dong', buy: 29.5, sell: 60, net: 30.5 },
-            { status: 'en-stock', name: 'Chemise Ralph Lauren Noir L', source: 'Taobao', buy: 25, sell: 0, net: -25 },
-            { status: 'donne', name: 'Chemise Ralph Lauren Bleu L', source: 'Taobao', buy: 25, sell: 0, net: -25 },
-            { status: 'en-stock', name: 'Pull Ralph Lauren (x2)', source: 'Taobao', buy: 20, sell: 0, net: -20 },
-            { status: 'en-stock', name: 'Gilet Ralph Lauren femme S', source: 'Taobao', buy: 26, sell: 0, net: -26 },
-            { status: 'vendu', name: 'Gilet Ralph Lauren femme Rose S', source: 'Taobao', buy: 26, sell: 70, net: 41.8 },
-            { status: 'donne', name: 'Casquette Ralph Lauren (x2)', source: 'Taobao', buy: 9, sell: 0, net: -9 },
-            { status: 'en-stock', name: 'Casquette Ralph Lauren Bleu', source: 'Taobao', buy: 9, sell: 0, net: -9 },
-            { status: 'en-stock', name: 'Lacoste Ensemble Noir L', source: 'Jetlife', buy: 29, sell: 0, net: -29 },
-            { status: 'vendu', name: 'Lacoste Bas Gris M', source: 'Jetlife', buy: 27, sell: 50, net: 23 },
-            { status: 'vendu', name: 'Ensemble Training OM Blanc (x4)', source: 'Jersey Dong', buy: 19.5, sell: 47, net: 27 },
-            { status: 'donne', name: 'Ensemble Training OM Blanc L (Defaut)', source: 'Jersey Dong', buy: 19.5, sell: 0, net: -19.5 },
-            { status: 'vendu', name: 'Ensemble Training OM Noir (x5)', source: 'Jersey Dong', buy: 19.5, sell: 45, net: 25 },
-            { status: 'vendu', name: 'Gants Noirs Taille 8', source: 'Yuan Ying', buy: 17.7, sell: 43, net: 25.3 },
-            { status: 'vendu', name: 'Gants Bleu Rouge Taille 9', source: 'Yuan Ying', buy: 17.7, sell: 50, net: 32.3 },
-            { status: 'vendu', name: 'Gants Noir Rouge (x2)', source: 'Yuan Ying', buy: 16.3, sell: 45, net: 28.7 },
-            { status: 'vendu', name: 'Gants Noirs Taille 8 (x2)', source: 'Yuan Ying', buy: 16.3, sell: 46, net: 30 },
-            { status: 'en-stock', name: 'Veste Patagonia Reversible M', source: 'Jetlife', buy: 52, sell: 0, net: -52 },
-            { status: 'donne', name: 'Veste Patagonia Reversible L', source: 'Jetlife', buy: 52, sell: 0, net: -52 },
-            { status: 'donne', name: 'Ensemble Training OM Menthe (x2)', source: 'Jersey Dong', buy: 21, sell: 0, net: -21 },
-            { status: 'vendu', name: 'Ensemble Training OM Menthe (x2)', source: 'Jersey Dong', buy: 21, sell: 50, net: 29 }
+            // --- 2025 (Extraits représentatifs) ---
+            { status: 'vendu', name: 'Maillot City', source: 'Taobao', cmd: 'TAO1', dateAchat: '13/05/2025', buy: 9.6, sell: 20, net: 10.4, dateVente: '20/05/2025', lieu: 'vinted' },
+            { status: 'vendu', name: 'Vidéo Projecteur', source: 'TikTok', cmd: 'Tkt2', dateAchat: '01/07/2025', buy: 22.8, sell: 50, net: 27.2, dateVente: '15/07/2025', lieu: 'Facebook' },
+            { status: 'vendu', name: 'Vidéo Projecteur (Amazon Test)', source: 'Amazon', cmd: 'Amz1', dateAchat: '01/07/2025', buy: 0, sell: 60, net: 60, dateVente: '05/07/2025', lieu: 'LBC' },
+            { status: 'vendu', name: 'Gants Predator', source: 'Taobao', cmd: 'TAO3', dateAchat: '07/08/2025', buy: 18.26, sell: 50, net: 30.37, dateVente: '20/08/2025', lieu: 'vinted' },
+            { status: 'donne', name: 'Veste Patagonia Reversible', source: 'Jetlife', cmd: 'Sug2', dateAchat: '06/11/2025', buy: 52, sell: 0, net: -52, dateVente: '-', lieu: 'Perso' },
+            { status: 'vendu', name: 'Ensemble Real Bleu M', source: 'Jersey Dong', cmd: 'JD1', dateAchat: '08/09/2025', buy: 9.2, sell: 30, net: 20.8, dateVente: '30/11/2025', lieu: 'vinted' },
+            { status: 'en-stock', name: 'Batterie Magsafe (x5)', source: 'Taobao', cmd: 'TAO1', dateAchat: '13/05/2025', buy: 9.6, sell: 0, net: 0, dateVente: '-', lieu: '-' }
         ];
 
-        function renderTable(filter = 'all') {
-            const tbody = document.getElementById('inventoryBody');
-            tbody.innerHTML = '';
-            
-            products.forEach(p => {
-                if (filter !== 'all' && p.status !== filter) return;
+        let currentStatusFilter = 'all';
 
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sourceTerm = document.getElementById('sourceFilter').value;
+            const tbody = document.querySelector('#masterTable tbody');
+            tbody.innerHTML = '';
+
+            const filtered = products.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+                const matchesSource = sourceTerm === 'all' || p.source === sourceTerm;
+                const matchesStatus = currentStatusFilter === 'all' || p.status === currentStatusFilter;
+                return matchesSearch && matchesSource && matchesStatus;
+            });
+
+            filtered.forEach(p => {
                 const statusColor = p.status === 'vendu' ? 'bg-green-100 text-green-700' : 
-                                    p.status === 'donne' ? 'bg-red-100 text-red-700' : 
-                                    'bg-blue-100 text-blue-700';
+                                    p.status === 'donne' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700';
                 
                 const netColor = p.net > 0 ? 'text-green-600 font-bold' : 
                                  p.net < 0 ? 'text-red-600 font-bold' : 'text-slate-400';
 
                 const row = `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 md:px-6 md:py-4"><span class="${statusColor} px-2 py-0.5 rounded text-[9px] font-bold uppercase">${p.status.replace('-', ' ')}</span></td>
-                        <td class="px-4 py-3 md:px-6 md:py-4 font-medium italic">${p.name}</td>
-                        <td class="px-4 py-3 md:px-6 md:py-4 text-slate-500 text-[10px] md:text-xs">${p.source}</td>
-                        <td class="px-4 py-3 md:px-6 md:py-4 text-slate-600 text-[10px] md:text-sm">${p.buy.toFixed(2)}€</td>
-                        <td class="px-4 py-3 md:px-6 md:py-4 text-slate-600 text-[10px] md:text-sm">${p.sell > 0 ? p.sell.toFixed(2) + '€' : '-'}</td>
-                        <td class="px-4 py-3 md:px-6 md:py-4 text-right ${netColor}">${p.net !== 0 ? (p.net > 0 ? '+' : '') + p.net.toFixed(2) + '€' : '-'}</td>
+                    <tr class="hover:bg-blue-50/50 transition-colors">
+                        <td class="px-4 py-3"><span class="${statusColor} px-2 py-0.5 rounded text-[9px] font-black uppercase">${p.status}</span></td>
+                        <td class="px-4 py-3 font-medium">${p.name}</td>
+                        <td class="px-4 py-3 text-slate-400 text-[10px]"><span class="text-slate-900 font-bold">${p.source}</span> / ${p.cmd}</td>
+                        <td class="px-4 py-3 text-center text-slate-500">${p.dateAchat}</td>
+                        <td class="px-4 py-3 text-right font-mono">${p.buy.toFixed(2)}€</td>
+                        <td class="px-4 py-3 text-right font-mono">${p.sell > 0 ? p.sell.toFixed(2) + '€' : '-'}</td>
+                        <td class="px-4 py-3 text-right font-mono ${netColor}">${p.net !== 0 ? (p.net > 0 ? '+' : '') + p.net.toFixed(2) + '€' : '-'}</td>
+                        <td class="px-4 py-3 text-center text-slate-500">${p.dateVente}</td>
+                        <td class="px-4 py-3 text-slate-600 font-medium">${p.lieu}</td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
             });
         }
 
-        function filterStatus(status) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            renderTable(status);
+        function setStatusFilter(status) {
+            currentStatusFilter = status;
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.classList.remove('filter-active');
+                if(btn.innerText.toLowerCase() === status.replace('-', ' ').toLowerCase() || (status === 'all' && btn.innerText === 'TOUT')) {
+                    btn.classList.add('filter-active');
+                }
+            });
+            applyFilters();
         }
 
-        renderTable();
+        window.onload = applyFilters;
     </script>
 </body>
 </html>
